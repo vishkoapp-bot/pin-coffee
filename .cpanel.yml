@@ -1,5 +1,14 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYMENT_DIR=$(echo $RESOLVED_DIR | rev | cut -d'/' -f1 | rev)
-    - rsync -av --exclude='.git' --exclude='.cpanel.yml' ./ $DEPLOYMENT_DIR/
+    - export DEPLOYPATH=/home/pincoffe/public_html/
+    - /bin/cp -R admin.html $DEPLOYPATH
+    - /bin/cp -R admin.php $DEPLOYPATH
+    - /bin/cp -R cafe-miyan-menu.html $DEPLOYPATH
+    - /bin/cp -R colors.txt $DEPLOYPATH
+    - /bin/cp -R index-api.html $DEPLOYPATH
+    - /bin/cp -R index.html $DEPLOYPATH
+    - /bin/cp -R index.php $DEPLOYPATH
+    - /bin/cp -R login.php $DEPLOYPATH
+    - /bin/cp -R logout.php $DEPLOYPATH
+    - /bin/cp -R .htaccess $DEPLOYPATH
