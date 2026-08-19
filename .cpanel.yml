@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYMENT_DIR=$(echo $RESOLVED_DIR | rev | cut -d'/' -f1 | rev)
+    - rsync -av --exclude='.git' --exclude='.cpanel.yml' ./ $DEPLOYMENT_DIR/
