@@ -1,0 +1,293 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --primary: #f6f0e7;
+  --secondary: #24312d;
+  --secondary-soft: #3e534b;
+  --secondary-deep: #141d1a;
+  --paper: #fbf7f0;
+  --ink: #2a2722;
+  --muted: #6f6860;
+  --accent: #9d7b49;
+  --accent-soft: #d2b37a;
+  --line: rgba(36, 49, 45, 0.12);
+  --line-strong: rgba(36, 49, 45, 0.2);
+  --panel: rgba(251, 247, 240, 0.82);
+  --white-soft: rgba(255, 255, 255, 0.76);
+  --shadow: 0 18px 60px rgba(30, 25, 18, 0.14);
+  --radius-xl: 32px;
+  --radius-lg: 24px;
+  --radius-md: 18px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Vazirmatn', sans-serif;
+  background:
+    radial-gradient(circle at top right, rgba(210, 179, 122, 0.18), transparent 30%),
+    radial-gradient(circle at bottom left, rgba(62, 83, 75, 0.14), transparent 34%),
+    linear-gradient(180deg, #f8f2e8 0%, #efe7da 100%);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.28;
+  background-image:
+    linear-gradient(rgba(36, 49, 45, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(36, 49, 45, 0.035) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(circle at center, black 35%, transparent 88%);
+  z-index: 0;
+}
+
+.page-shell,
+.admin-shell {
+  position: relative;
+  z-index: 1;
+}
+
+.hidden-input { display: none; }
+
+.hero-btn,
+.ghost-btn,
+.save-btn,
+.reset-btn,
+.upload-btn,
+.top-link {
+  border: 0;
+  border-radius: 999px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+  text-decoration: none;
+}
+
+.hero-btn,
+.save-btn {
+  background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-soft) 100%);
+  color: var(--primary);
+  box-shadow: 0 12px 24px rgba(36, 49, 45, 0.16);
+}
+
+.ghost-btn,
+.reset-btn,
+.upload-btn,
+.top-link {
+  background: rgba(255, 255, 255, 0.62);
+  color: var(--secondary);
+  border: 1px solid rgba(36, 49, 45, 0.12);
+}
+
+.hero-btn:hover,
+.ghost-btn:hover,
+.save-btn:hover,
+.reset-btn:hover,
+.upload-btn:hover,
+.top-link:hover {
+  transform: translateY(-3px);
+}
+
+.hero-btn,
+.ghost-btn,
+.save-btn,
+.reset-btn,
+.upload-btn,
+.top-link {
+  padding: 0.9rem 1.35rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.field,
+.admin-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.field label {
+  color: var(--secondary);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.admin-input,
+.admin-select,
+.admin-textarea {
+  width: 100%;
+  border: 1px solid rgba(36, 49, 45, 0.12);
+  background: rgba(255, 255, 255, 0.82);
+  border-radius: 16px;
+  padding: 0.9rem 1rem;
+  font-family: inherit;
+  color: var(--ink);
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-input:focus,
+.admin-select:focus,
+.admin-textarea:focus {
+  border-color: rgba(157, 123, 73, 0.42);
+  box-shadow: 0 0 0 4px rgba(157, 123, 73, 0.1);
+}
+
+.admin-textarea {
+  min-height: 102px;
+  resize: vertical;
+}
+
+.small-textarea { min-height: 82px; }
+
+.checkbox-line {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: rgba(42, 39, 34, 0.8);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.checkbox-line input {
+  accent-color: var(--accent);
+  width: 18px;
+  height: 18px;
+}
+
+.admin-preview {
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at top, rgba(157, 123, 73, 0.1), transparent 55%),
+    rgba(255, 255, 255, 0.6);
+  border: 1px dashed rgba(36, 49, 45, 0.14);
+  min-height: 180px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 1rem;
+}
+
+.admin-preview img {
+  max-width: 78%;
+  max-height: 150px;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 18px rgba(36, 49, 45, 0.12));
+}
+
+.admin-preview span {
+  color: rgba(36, 49, 45, 0.54);
+  font-size: 0.82rem;
+  text-align: center;
+  line-height: 1.8;
+}
+
+.status-note {
+  min-height: 1.4rem;
+  color: var(--accent);
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.8;
+}
+
+@keyframes fadeRise {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes floatBlob {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(24px) scale(1.05); }
+}
+
+@keyframes shimmer {
+  0%, 100% { box-shadow: 0 0 0 rgba(157, 123, 73, 0); }
+  50% { box-shadow: 0 0 0 10px rgba(157, 123, 73, 0.02); }
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulseRing {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.06); opacity: 1; }
+}
+
+@keyframes cardFloat {
+  0%, 100% { transform: rotate(-6deg) translateY(0); }
+  50% { transform: rotate(-4deg) translateY(-12px); }
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes steamWave {
+  0% { transform: translateY(18px) scaleX(0.8); opacity: 0; }
+  30% { opacity: 0.8; }
+  100% { transform: translateY(-18px) scaleX(1.12); opacity: 0; }
+}
+
+@keyframes hoverDrift {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-6px) rotate(1.5deg); }
+}
+
+@keyframes pulseIcon {
+  0%, 100% { transform: scale(1); box-shadow: 0 12px 22px rgba(36, 49, 45, 0.16); }
+  50% { transform: scale(1.05); box-shadow: 0 18px 28px rgba(36, 49, 45, 0.2); }
+}
+
+@keyframes logoBreath {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.035); }
+}
+
+@keyframes orbitDriftOne {
+  from { transform: rotate(-8deg); }
+  to { transform: rotate(352deg); }
+}
+
+@keyframes orbitDriftTwo {
+  from { transform: rotate(18deg); }
+  to { transform: rotate(378deg); }
+}
+
+@keyframes orbitDotOne {
+  from { transform: rotate(0deg) translateX(min(36vw, 300px)) rotate(0deg); }
+  to { transform: rotate(360deg) translateX(min(36vw, 300px)) rotate(-360deg); }
+}
+
+@keyframes orbitDotTwo {
+  from { transform: rotate(70deg) translateX(min(29vw, 240px)) rotate(-70deg); }
+  to { transform: rotate(430deg) translateX(min(29vw, 240px)) rotate(-430deg); }
+}
+
+@keyframes orbitDotThree {
+  from { transform: rotate(140deg) translateX(min(20vw, 160px)) rotate(-140deg); }
+  to { transform: rotate(500deg) translateX(min(20vw, 160px)) rotate(-500deg); }
+}
+
+@media (max-width: 720px) {
+  .field-row { grid-template-columns: 1fr; }
+}

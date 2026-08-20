@@ -1,0 +1,8 @@
+[17-Jun-2026 13:19:42 UTC] PHP Parse error:  syntax error, unexpected '=>' (T_DOUBLE_ARROW) in /home/pincoffe/public_html/key/index.php on line 63
+[17-Jun-2026 13:22:56 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mb_strtolower() in /home/pincoffe/public_html/key/index.php:72
+Stack trace:
+#0 /home/pincoffe/public_html/key/index.php(262): detectIntent()
+#1 {main}
+  thrown in /home/pincoffe/public_html/key/index.php on line 72
+[21-Jun-2026 09:45:07 UTC] PHP Parse error:  syntax error, unexpected 'SearchIntent' (T_STRING) in /home/pincoffe/public_html/key/seo-engine.php on line 19
+[21-Jun-2026 09:45:18 UTC] PHP Parse error:  syntax error, unexpected 'SearchIntent' (T_STRING) in /home/pincoffe/public_html/key/seo-engine.php on line 19

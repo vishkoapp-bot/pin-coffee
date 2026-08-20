@@ -1,0 +1,10 @@
+pinname_db
+You have created a database named “pincoffe_pinname_db”.
+
+pinuser_db
+E{nME*].y(CZSHvw
+You have successfully created a database user named “pincoffe_pinuser_db”.
+
+
+User: pincoffe_pinuser_db
+Database: pincoffe_pinname_db
