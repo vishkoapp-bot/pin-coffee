@@ -11,6 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 $config = require __DIR__ . '/config.php';
 require __DIR__ . '/database.php';
+require __DIR__ . '/auth.php';
 
 function respondJson($payload, int $statusCode = 200): void {
     http_response_code($statusCode);
@@ -18,12 +19,12 @@ function respondJson($payload, int $statusCode = 200): void {
     exit;
 }
 
-function requireToken(array $config): void {
+function authorize(array $config): void {
     $body = json_decode(file_get_contents('php://input'), true) ?: [];
     $token = $body['token'] ?? $_POST['token'] ?? $_GET['token'] ?? '';
-    if ($token !== $config['admin_token']) {
-        respondJson(['success' => false, 'error' => 'Unauthorized'], 403);
-    }
+    if (isAdminLoggedIn()) return;
+    if ($token !== '' && hash_equals($config['admin_token'] ?? '', $token)) return;
+    respondJson(['success' => false, 'error' => 'Unauthorized'], 403);
 }
 
 function normalizeInput(array $input): array {
@@ -34,7 +35,7 @@ function normalizeInput(array $input): array {
 }
 
 try {
-    requireToken($config);
+    authorize($config);
 
     $input = json_decode(file_get_contents('php://input'), true) ?: [];
     $menu = normalizeInput($input);
