@@ -282,12 +282,33 @@
     drawer.classList.add("open");
     drawer.setAttribute("aria-hidden", "false");
     document.body.classList.add("modal-open");
+    syncDrawerToViewport();
   }
 
   function closeDrawer() {
     drawer.classList.remove("open");
     drawer.setAttribute("aria-hidden", "true");
     document.body.classList.remove("modal-open");
+    document.removeEventListener("focusin", syncDrawerToViewport);
+  }
+
+  // Resize the drawer panel to the visual viewport so iOS keyboard
+  // doesn't cover the action buttons at the bottom.
+  function syncDrawerToViewport() {
+    if (!drawer.classList.contains("open")) return;
+    const panel = drawer.querySelector(".drawer-panel");
+    if (!panel) return;
+    const vv = window.visualViewport;
+    if (vv) {
+      panel.style.maxHeight = `${vv.height}px`;
+      panel.style.height = `${vv.height}px`;
+    }
+    document.addEventListener("focusin", syncDrawerToViewport, { once: true });
+  }
+
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", syncDrawerToViewport);
+    window.visualViewport.addEventListener("scroll", syncDrawerToViewport);
   }
 
   document.querySelectorAll("[data-drawer-close]").forEach((el) =>
