@@ -39,7 +39,6 @@ if (empty($_SESSION['admin_authenticated'])) {
     </header>
 
     <nav class="admin-tabs" role="tablist" aria-label="بخش‌های مدیریت">
-      <span class="tab-indicator" aria-hidden="true"></span>
       <button class="tab-btn active" role="tab" data-tab="settings" aria-selected="true">⚙️ تنظیمات عمومی</button>
       <button class="tab-btn" role="tab" data-tab="sections" aria-selected="false">📂 دسته‌بندی‌ها <span class="tab-count" id="sectionsCount">0</span></button>
       <button class="tab-btn" role="tab" data-tab="items" aria-selected="false">☕ آیتم‌ها <span class="tab-count" id="itemsCount">0</span></button>

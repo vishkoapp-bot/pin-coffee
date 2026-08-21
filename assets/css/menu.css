@@ -633,6 +633,38 @@
 .tag.new { background: rgba(36, 49, 45, 0.08); color: var(--secondary); border-color: rgba(36, 49, 45, 0.1); }
 .tag.vegan { background: rgba(79, 112, 74, 0.11); color: #496f45; border-color: rgba(79, 112, 74, 0.14); }
 
+.tag-btn {
+  font: inherit;
+  cursor: pointer;
+  font-size: 0.68rem;
+  font-weight: 800;
+  font-family: inherit;
+  position: relative;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.tag-btn.has-image::before {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  margin-inline-end: 0.3rem;
+  vertical-align: middle;
+  opacity: 0.6;
+}
+
+.tag-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(0.96);
+}
+
+.tag-btn.active {
+  box-shadow: 0 0 0 2px currentColor inset, 0 6px 14px rgba(31, 26, 20, 0.08);
+  transform: translateY(-1px);
+}
+
 .footer {
   max-width: 1180px;
   margin: 0 auto;

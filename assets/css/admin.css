@@ -132,12 +132,15 @@ body.admin-page {
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  transition: color 0.2s;
+  transition: color 0.2s, background 0.25s;
   z-index: 1;
 }
 
 .tab-btn:hover { color: var(--ink-refined); }
-.tab-btn.active { color: var(--paper-refined); }
+.tab-btn.active {
+  background: var(--ink-refined);
+  color: var(--paper-refined);
+}
 
 .tab-btn .tab-count {
   display: inline-grid;
@@ -158,13 +161,7 @@ body.admin-page {
 }
 
 .tab-indicator {
-  position: absolute;
-  top: 0.25rem;
-  bottom: 0.25rem;
-  background: var(--ink-refined);
-  border-radius: calc(var(--radius-md) - 4px);
-  transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1), width 0.32s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 0;
+  display: none;
 }
 
 /* ---------- Tab panels ---------- */
@@ -350,6 +347,100 @@ body.admin-page {
   color: var(--ink-soft);
   line-height: 1.6;
 }
+
+/* ---------- Tag images editor ---------- */
+.tag-images {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.tag-images-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tag-images-header strong {
+  font-size: 0.875rem;
+  color: var(--ink-refined);
+}
+
+.tag-images-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 0.5rem;
+}
+
+.tag-image-slot {
+  position: relative;
+  aspect-ratio: 1;
+  border: 1px dashed var(--border-refined);
+  border-radius: var(--radius-sm);
+  background: var(--paper-refined);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.tag-image-slot:hover { border-color: var(--coffee); }
+
+.tag-image-slot.has-image {
+  border-style: solid;
+  background: var(--surface);
+}
+
+.tag-image-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tag-image-slot-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.2rem 0.4rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--paper-refined);
+  background: rgba(31, 26, 20, 0.78);
+  text-align: center;
+  backdrop-filter: blur(2px);
+}
+
+.tag-image-slot-add {
+  font-size: 0.7rem;
+  color: var(--ink-soft);
+  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  align-items: center;
+}
+
+.tag-image-slot-remove {
+  position: absolute;
+  top: 0.25rem;
+  left: 0.25rem;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(31, 26, 20, 0.85);
+  color: var(--paper-refined);
+  cursor: pointer;
+  display: none;
+  place-items: center;
+  font-size: 0.7rem;
+  z-index: 1;
+}
+
+.tag-image-slot:hover .tag-image-slot-remove { display: grid; }
 
 /* ---------- Buttons ---------- */
 .save-btn,

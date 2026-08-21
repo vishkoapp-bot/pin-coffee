@@ -82,7 +82,7 @@ try {
                 'tags' => json_encode(array_values($item['tags'] ?? []), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
                 'featured' => !empty($item['featured']) ? 1 : 0,
                 'emoji' => $item['emoji'] ?? '',
-                'image' => $item['image'] ?? '',
+                'image' => is_array($item['image'] ?? null) ? json_encode($item['image'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) : ($item['image'] ?? ''),
                 'wide' => !empty($item['wide']) ? 1 : 0,
                 'position' => $position++
             ]);

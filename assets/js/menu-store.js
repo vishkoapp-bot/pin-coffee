@@ -87,6 +87,18 @@ window.MenuStore = (() => {
     };
   }
 
+  function normalizeImage(value) {
+    if (!value) return { default: "", tags: {} };
+    if (typeof value === "string") return { default: value, tags: {} };
+    if (typeof value === "object") {
+      return {
+        default: value.default || "",
+        tags: value.tags && typeof value.tags === "object" ? { ...value.tags } : {}
+      };
+    }
+    return { default: "", tags: {} };
+  }
+
   function normalizeMenuResponse(payload) {
     const source = payload && typeof payload === "object" && payload.data && typeof payload.data === "object"
       ? payload.data
@@ -112,7 +124,7 @@ window.MenuStore = (() => {
                 tags: Array.isArray(item.tags) ? item.tags : [],
                 featured: Boolean(item.featured),
                 emoji: item.emoji || "☕",
-                image: item.image || ""
+                image: normalizeImage(item.image)
               }))
             : []
         }));
@@ -127,6 +139,21 @@ window.MenuStore = (() => {
     base.footerInfo = source.footerInfo || base.footerInfo;
     base.footerLinks = Array.isArray(source.footerLinks) ? source.footerLinks.filter(link => link && typeof link === "object") : base.footerLinks;
     return base;
+  }
+
+  function serializeImage(image) {
+    if (!image) return null;
+    if (typeof image === "string") return image ? { default: image, tags: {} } : null;
+    const tags = {};
+    if (image.tags && typeof image.tags === "object") {
+      for (const [key, value] of Object.entries(image.tags)) {
+        if (value) tags[key] = value;
+      }
+    }
+    return {
+      default: image.default || "",
+      tags
+    };
   }
 
   function toApiPayload(menu) {
@@ -154,7 +181,7 @@ window.MenuStore = (() => {
           tags: Array.isArray(item.tags) ? item.tags : [],
           featured: Boolean(item.featured),
           emoji: item.emoji || "☕",
-          image: item.image || ""
+          image: serializeImage(item.image)
         }))
       }))
     };

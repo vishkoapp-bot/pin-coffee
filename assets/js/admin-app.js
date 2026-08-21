@@ -12,7 +12,6 @@
   // Element refs
   const tabButtons = document.querySelectorAll(".tab-btn");
   const tabPanels = document.querySelectorAll(".tab-panel");
-  const tabIndicator = document.querySelector(".tab-indicator");
   const sectionsList = $("sectionsList");
   const sectionsEmpty = $("sectionsEmpty");
   const itemsList = $("itemsList");
@@ -76,21 +75,12 @@
   }
 
   // ---------- Tabs ----------
-  function moveIndicator(btn) {
-    if (!tabIndicator || !btn) return;
-    const navRect = btn.parentElement.getBoundingClientRect();
-    const btnRect = btn.getBoundingClientRect();
-    tabIndicator.style.width = `${btnRect.width}px`;
-    tabIndicator.style.transform = `translateX(${btnRect.left - navRect.left}px)`;
-  }
-
   function switchTab(tabId) {
     currentTab = tabId;
     tabButtons.forEach((btn) => {
       const active = btn.dataset.tab === tabId;
       btn.classList.toggle("active", active);
       btn.setAttribute("aria-selected", String(active));
-      if (active) moveIndicator(btn);
     });
     tabPanels.forEach((panel) => {
       panel.classList.toggle("active", panel.id === `tab-${tabId}`);
@@ -385,17 +375,27 @@
     ).join("");
 
     drawerBody.innerHTML = `
-      <div class="image-edit">
-        <div class="image-edit-preview" id="drawerItemImagePreview"></div>
-        <div class="image-edit-controls">
-          <strong>تصویر آیتم</strong>
-          <span class="muted">PNG/JPG/WebP. حداکثر 5MB.</span>
-          <div class="admin-actions">
-            <button class="upload-btn" type="button" id="drawerItemUploadBtn">📤 آپلود</button>
-            <button class="reset-btn" type="button" id="drawerItemRemoveImageBtn">🗑 حذف</button>
+      <div class="field">
+        <label>تصاویر (پیش‌فرض + اختصاصی برای هر تگ)</label>
+        <div class="tag-images">
+          <div class="tag-images-header">
+            <span class="muted">روی هر تگ کلیک کن تا تصویر مخصوصش را آپلود کنی. اگه تصویری برای تگ نذاری، تصویر پیش‌فرض نمایش داده می‌شود.</span>
           </div>
+          <div class="image-edit">
+            <div class="image-edit-preview" id="drawerItemImagePreview"></div>
+            <div class="image-edit-controls">
+              <strong>تصویر پیش‌فرض</strong>
+              <span class="muted">این تصویر وقتی نمایش داده می‌شود که تگ فعالی انتخاب نشده باشد.</span>
+              <div class="admin-actions">
+                <button class="upload-btn" type="button" id="drawerItemUploadBtn">📤 آپلود</button>
+                <button class="reset-btn" type="button" id="drawerItemRemoveImageBtn">🗑 حذف</button>
+              </div>
+            </div>
+            <input id="drawerItemImageInput" class="hidden-input" type="file" accept="image/*">
+          </div>
+          <div class="tag-images-grid" id="drawerTagImagesGrid"></div>
+          <input id="drawerTagImageInput" class="hidden-input" type="file" accept="image/*">
         </div>
-        <input id="drawerItemImageInput" class="hidden-input" type="file" accept="image/*">
       </div>
       <div class="field-row">
         <div class="field">
@@ -440,7 +440,8 @@
         آیتم ویژه باشد
       </label>
     `;
-    previewImage("drawerItemImagePreview", item.image, "تصویر ثبت نشده");
+    renderTagImageSlots(item);
+    previewImage("drawerItemImagePreview", item.image.default || "", "تصویر ثبت نشده");
 
     $("drawerItemUploadBtn").addEventListener("click", () => $("drawerItemImageInput").click());
     $("drawerItemImageInput").addEventListener("change", async (e) => {
@@ -448,19 +449,89 @@
       if (!file) return;
       try {
         const uploaded = await uploadImage(file);
-        item.image = uploaded;
+        item.image.default = uploaded;
         previewImage("drawerItemImagePreview", uploaded, "تصویر ثبت نشده");
-        toast("تصویر آپلود شد.");
+        toast("تصویر پیش‌فرض آپلود شد.");
       } catch (err) {
         toast(err?.message || "آپلود ناموفق بود.", "error");
       }
     });
     $("drawerItemRemoveImageBtn").addEventListener("click", () => {
-      item.image = "";
+      item.image.default = "";
       previewImage("drawerItemImagePreview", "", "تصویر ثبت نشده");
     });
 
+    // Tag-image upload: clicked slot stores which tag is targeted
+    let pendingTagForUpload = null;
+    $("drawerTagImageInput").addEventListener("change", async (e) => {
+      const file = e.target.files?.[0];
+      e.target.value = "";
+      const tag = pendingTagForUpload;
+      pendingTagForUpload = null;
+      if (!file || !tag) return;
+      try {
+        const uploaded = await uploadImage(file);
+        item.image.tags = item.image.tags || {};
+        item.image.tags[tag] = uploaded;
+        renderTagImageSlots(item);
+        toast(`تصویر برای تگ «${tagLabel(tag)}» آپلود شد.`);
+      } catch (err) {
+        toast(err?.message || "آپلود ناموفق بود.", "error");
+      }
+    });
+    $("drawerTagImagesGrid").addEventListener("click", (e) => {
+      const removeBtn = e.target.closest(".tag-image-slot-remove");
+      if (removeBtn) {
+        e.stopPropagation();
+        const tag = removeBtn.dataset.tag;
+        if (tag && item.image.tags) {
+          delete item.image.tags[tag];
+          renderTagImageSlots(item);
+        }
+        return;
+      }
+      const slot = e.target.closest(".tag-image-slot");
+      if (!slot) return;
+      const tag = slot.dataset.tag;
+      if (!tag) return;
+      pendingTagForUpload = tag;
+      $("drawerTagImageInput").click();
+    });
+
     openDrawer();
+  }
+
+  // Render tag-image slots based on item.tags (each tag gets a slot)
+  function renderTagImageSlots(item) {
+    const grid = $("drawerTagImagesGrid");
+    if (!grid) return;
+    const tags = item.tags || [];
+    if (!tags.length) {
+      grid.innerHTML = `<div class="muted" style="grid-column:1/-1;text-align:center;padding:0.6rem;">تگ‌ها را در پایین وارد کن تا بتوانی تصویر اختصاصی برایشان بگذاری.</div>`;
+      return;
+    }
+    grid.innerHTML = tags.map((tag) => {
+      const url = item.image.tags?.[tag] || "";
+      const hasImage = !!url;
+      return `
+        <div class="tag-image-slot ${hasImage ? "has-image" : ""}" data-tag="${escapeAttr(tag)}" title="کلیک برای آپلود تصویر «${escapeAttr(tagLabel(tag))}»">
+          ${hasImage ? `<img src="${escapeAttr(url)}" alt="${escapeAttr(tag)}">` : `<span class="tag-image-slot-add">+<span>${escapeHtml(tagLabel(tag))}</span></span>`}
+          <span class="tag-image-slot-label">${escapeHtml(tagLabel(tag))}</span>
+          ${hasImage ? `<button class="tag-image-slot-remove" type="button" data-tag="${escapeAttr(tag)}" aria-label="حذف">×</button>` : ""}
+        </div>
+      `;
+    }).join("");
+  }
+
+  function tagLabel(tag) {
+    const labels = {
+      hot: "گرم",
+      cold: "سرد",
+      sweet: "شیرین",
+      new: "جدید",
+      vegan: "وگان"
+    };
+    return labels[tag] || tag;
   }
 
   async function saveItemFromDrawer(oldSectionId, oldItemId) {
@@ -717,12 +788,6 @@
   refreshItemsFilter();
   renderItems();
   refreshTabCounts();
-
-  // Position sliding indicator on first paint and on resize
-  requestAnimationFrame(() => moveIndicator(document.querySelector(".tab-btn.active")));
-  window.addEventListener("resize", () =>
-    moveIndicator(document.querySelector(".tab-btn.active"))
-  );
 
   // ---------- Helpers ----------
   function uniqueId(base, usedIds) {

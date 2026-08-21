@@ -11,6 +11,18 @@ function respondJson($payload, int $statusCode = 200): void {
     exit;
 }
 
+function decodeStoredImage($raw): array {
+    if (!$raw) return ['default' => '', 'tags' => []];
+    $decoded = json_decode($raw, true);
+    if (is_array($decoded) && (isset($decoded['default']) || isset($decoded['tags']))) {
+        return [
+            'default' => $decoded['default'] ?? '',
+            'tags' => is_array($decoded['tags'] ?? null) ? $decoded['tags'] : []
+        ];
+    }
+    return ['default' => (string) $raw, 'tags' => []];
+}
+
 function fallbackMenu(): array {
     return [
         'brandLogo' => '',
@@ -115,7 +127,7 @@ try {
             'tags' => json_decode($row['tags'] ?? '[]', true) ?: [],
             'featured' => (bool) $row['featured'],
             'emoji' => $row['emoji'] ?? '☕',
-            'image' => $row['image'] ?? ''
+            'image' => decodeStoredImage($row['image'] ?? '')
         ];
     }
 

@@ -120,14 +120,32 @@
     });
   }
 
+  function getItemImage(item, activeTag) {
+    if (activeTag && item.image && item.image.tags && item.image.tags[activeTag]) {
+      return item.image.tags[activeTag];
+    }
+    if (item.image && typeof item.image === "object") {
+      return item.image.default || "";
+    }
+    return typeof item.image === "string" ? item.image : "";
+  }
+
+  function hasTagImage(item, tag) {
+    return !!(item.image && item.image.tags && item.image.tags[tag]);
+  }
+
   function renderItem(item) {
-    const tags = (item.tags || []).map(tag => `<span class="tag ${tag}">${tagLabel(tag)}</span>`).join("");
+    const tags = (item.tags || []).map(tag => {
+      const hasImg = hasTagImage(item, tag);
+      return `<button type="button" class="tag tag-btn ${tag}${hasImg ? " has-image" : ""}" data-tag="${tag}" aria-label="نمایش تصویر ${tagLabel(tag)}">${tagLabel(tag)}</button>`;
+    }).join("");
+    const initialImage = getItemImage(item, null);
     return `
       <article class="menu-item" data-item-id="${item.id}" tabindex="0" role="button" aria-label="نمایش جزئیات ${item.fa || item.en || ""}">
         <div class="item-action-hint">لمس برای جزئیات</div>
         ${item.featured ? '<div class="badge-popular">پیشنهاد ویژه</div>' : ""}
-        <div class="item-visual ${item.image ? "" : "no-image"}">
-          <img class="item-image" src="${item.image || ""}" alt="${item.fa || item.en || ""}">
+        <div class="item-visual ${initialImage ? "" : "no-image"}">
+          <img class="item-image" src="${initialImage}" alt="${item.fa || item.en || ""}">
           <div class="item-visual-fallback" aria-hidden="true">${item.emoji || "☕"}</div>
         </div>
         <div class="item-top">
@@ -190,6 +208,37 @@
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
           openModal(item);
+        }
+      });
+
+      bindTagButtons(card, item);
+    });
+  }
+
+  function bindTagButtons(card, item) {
+    const imgEl = card.querySelector(".item-image");
+    const visualEl = card.querySelector(".item-visual");
+    const tagButtons = card.querySelectorAll(".tag-btn");
+
+    tagButtons.forEach((btn) => {
+      btn.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const tag = btn.dataset.tag;
+        const next = card.dataset.activeTag === tag ? null : tag;
+        card.dataset.activeTag = next || "";
+
+        tagButtons.forEach((b) => {
+          b.classList.toggle("active", b.dataset.tag === next);
+        });
+
+        const url = getItemImage(item, next);
+        if (url) {
+          imgEl.src = url;
+          imgEl.alt = `${item.fa || item.en || ""} (${tagLabel(tag)})`;
+          visualEl.classList.remove("no-image");
+        } else {
+          imgEl.removeAttribute("src");
+          visualEl.classList.add("no-image");
         }
       });
     });
