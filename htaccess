@@ -1,7 +1,0 @@
-DirectoryIndex index.php index.html
-
-RewriteEngine On
-
-RewriteRule ^admin\.html$ /login.php [R=302,L]
-RewriteRule ^cafe-miyan-menu\.html$ /index.html [R=302,L]
-RewriteRule ^index-api\.html$ /index.html [R=302,L]

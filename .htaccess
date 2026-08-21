@@ -1,0 +1,28 @@
+DirectoryIndex index.php index.html
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Block direct access to dotfiles / sensitive paths
+    RewriteRule (^|/)\.git(/|$) - [F,L]
+    RewriteRule ^pinname_db\.txt$ - [F,L]
+    RewriteRule ^colors\.txt$ - [F,L]
+    RewriteRule ^api/(config|database|auth)\.php$ - [F,L]
+    RewriteRule ^api/migrate\.php$ - [F,L]
+
+    # Legacy entry points → main entry
+    RewriteRule ^admin\.html$ /login.php [R=302,L]
+    RewriteRule ^index-api\.html$ /index.php [R=302,L]
+    RewriteRule ^cafe-miyan-menu\.html$ /index.php [R=302,L]
+    RewriteRule ^index\.html$ /index.php [R=302,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+<FilesMatch "\.(env|sql|md|yml|log)$">
+    Require all denied
+</FilesMatch>

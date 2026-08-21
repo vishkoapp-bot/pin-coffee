@@ -31,7 +31,7 @@ $adminToken = $config['admin_token'] ?? '';
         <span>دسته‌بندی‌ها، آیتم‌ها، قیمت‌ها، تصاویر و اطلاعات عمومی منو را مدیریت کن.</span>
       </div>
       <div style="display:flex; gap:12px; align-items:center;">
-        <a class="top-link" href="/index.html">مشاهده صفحه منو</a>
+        <a class="top-link" href="/index.php">مشاهده صفحه منو</a>
         <a class="top-link" href="/logout.php">خروج</a>
       </div>
     </header>

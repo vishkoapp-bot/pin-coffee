@@ -1,0 +1,23 @@
+# OS / editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Deploy / repo internals
+.git/
+.well-known-tmp/
+
+# Logs (must never be committed)
+*.log
+error_log
+
+# Local-only test artifacts
+deploy-test*.html
+
+# Credentials and sensitive runtime files
+pinname_db.txt
+
+# Uploaded media (regenerated on server)
+uploads/*
+!uploads/.gitkeep

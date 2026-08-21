@@ -7,7 +7,7 @@ require __DIR__ . '/database.php';
 $seed = [
     'brandLogo' => '',
     'showcaseImage' => '',
-    'heroDescription' => 'یک منوی گرم و مینیمال با ظاهر لوکس برای کافه میان.',
+    'heroDescription' => 'یک منوی گرم و مینیمال با ظاهر لوکس برای کافه پین.',
     'showcaseTitle' => 'فضای گرم، منوی پویا',
     'showcaseDescription' => 'ترکیبی از هویت بصری خاص، تصاویر تمیز و آیتم‌های کاملاً قابل مدیریت.',
     'footerBrandTitle' => 'میان',
