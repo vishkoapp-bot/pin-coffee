@@ -12,6 +12,7 @@
   // Element refs
   const tabButtons = document.querySelectorAll(".tab-btn");
   const tabPanels = document.querySelectorAll(".tab-panel");
+  const tabIndicator = document.querySelector(".tab-indicator");
   const sectionsList = $("sectionsList");
   const sectionsEmpty = $("sectionsEmpty");
   const itemsList = $("itemsList");
@@ -27,6 +28,8 @@
   const confirmMessage = $("confirmMessage");
   const confirmOk = $("confirmOk");
   const toastContainer = $("toastContainer");
+  const sectionsCount = $("sectionsCount");
+  const itemsCount = $("itemsCount");
 
   // ---------- Toast ----------
   function toast(message, type = "success", duration = 2600) {
@@ -73,16 +76,32 @@
   }
 
   // ---------- Tabs ----------
+  function moveIndicator(btn) {
+    if (!tabIndicator || !btn) return;
+    const navRect = btn.parentElement.getBoundingClientRect();
+    const btnRect = btn.getBoundingClientRect();
+    tabIndicator.style.width = `${btnRect.width}px`;
+    tabIndicator.style.transform = `translateX(${btnRect.left - navRect.left}px)`;
+  }
+
   function switchTab(tabId) {
     currentTab = tabId;
     tabButtons.forEach((btn) => {
       const active = btn.dataset.tab === tabId;
       btn.classList.toggle("active", active);
       btn.setAttribute("aria-selected", String(active));
+      if (active) moveIndicator(btn);
     });
     tabPanels.forEach((panel) => {
       panel.classList.toggle("active", panel.id === `tab-${tabId}`);
     });
+  }
+
+  function refreshTabCounts() {
+    if (sectionsCount) sectionsCount.textContent = data.sections.length;
+    if (itemsCount) {
+      itemsCount.textContent = MenuStore.flattenItems(data).length;
+    }
   }
 
   tabButtons.forEach((btn) => {
@@ -169,12 +188,15 @@
 
     filtered.forEach(({ item, section }) => {
       const card = document.createElement("article");
-      card.className = "item-card";
+      card.className = `item-card${item.featured ? " is-featured" : ""}`;
       card.draggable = true;
       card.dataset.itemId = item.id;
       const tags = (item.tags || []).slice(0, 3).map((t) =>
         `<span class="item-tag">${escapeHtml(t)}</span>`
       ).join("");
+      const featuredBadge = item.featured
+        ? '<span class="item-tag featured">⭐ ویژه</span>'
+        : "";
       card.innerHTML = `
         <span class="card-handle" aria-hidden="true">⋮⋮</span>
         <div class="item-card-icon">${escapeHtml(item.emoji || section.icon || "☕")}</div>
@@ -182,11 +204,10 @@
           <div class="item-card-title">${escapeHtml(item.fa || item.en || item.id)}</div>
           <div class="item-card-meta">
             <span class="item-card-price">${escapeHtml(item.price || "0")}</span>
-            <span>•</span>
+            <span class="dot"></span>
             <span>${escapeHtml(section.fa || section.id)}</span>
-            ${item.featured ? '<span>•</span><span>⭐ ویژه</span>' : ""}
           </div>
-          ${tags ? `<div class="item-card-tags">${tags}</div>` : ""}
+          ${(tags || featuredBadge) ? `<div class="item-card-tags">${featuredBadge}${tags}</div>` : ""}
         </div>
         <div class="item-card-actions">
           <button class="icon-btn" data-action="edit" title="ویرایش">✏️</button>
@@ -666,6 +687,7 @@
       renderSections();
       refreshItemsFilter();
       renderItems();
+      refreshTabCounts();
       if (message) toast(message);
     } catch (err) {
       toast(err?.message || "ذخیره ناموفق بود.", "error");
@@ -694,6 +716,13 @@
   renderSections();
   refreshItemsFilter();
   renderItems();
+  refreshTabCounts();
+
+  // Position sliding indicator on first paint and on resize
+  requestAnimationFrame(() => moveIndicator(document.querySelector(".tab-btn.active")));
+  window.addEventListener("resize", () =>
+    moveIndicator(document.querySelector(".tab-btn.active"))
+  );
 
   // ---------- Helpers ----------
   function uniqueId(base, usedIds) {

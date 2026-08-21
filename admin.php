@@ -39,9 +39,10 @@ if (empty($_SESSION['admin_authenticated'])) {
     </header>
 
     <nav class="admin-tabs" role="tablist" aria-label="بخش‌های مدیریت">
+      <span class="tab-indicator" aria-hidden="true"></span>
       <button class="tab-btn active" role="tab" data-tab="settings" aria-selected="true">⚙️ تنظیمات عمومی</button>
-      <button class="tab-btn" role="tab" data-tab="sections" aria-selected="false">📂 دسته‌بندی‌ها</button>
-      <button class="tab-btn" role="tab" data-tab="items" aria-selected="false">☕ آیتم‌ها</button>
+      <button class="tab-btn" role="tab" data-tab="sections" aria-selected="false">📂 دسته‌بندی‌ها <span class="tab-count" id="sectionsCount">0</span></button>
+      <button class="tab-btn" role="tab" data-tab="items" aria-selected="false">☕ آیتم‌ها <span class="tab-count" id="itemsCount">0</span></button>
       <button class="tab-btn" role="tab" data-tab="operations" aria-selected="false">🛠 عملیات</button>
     </nav>
 
@@ -134,7 +135,13 @@ if (empty($_SESSION['admin_authenticated'])) {
           <div class="panel-body">
             <div class="card-list" id="sectionsList" aria-label="لیست دسته‌بندی‌ها"></div>
             <div class="empty-state" id="sectionsEmpty" hidden>
-              <div class="empty-icon">📂</div>
+              <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                <path d="M16 24h32v18a8 8 0 0 1-8 8H24a8 8 0 0 1-8-8V24Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M48 28h4a4 4 0 0 1 0 8h-4" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M22 8c2 2-2 5 0 7s-2 5 0 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M32 6c2 2-2 5 0 7s-2 5 0 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M42 8c2 2-2 5 0 7s-2 5 0 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
               <h3>هنوز دسته‌بندی نداری</h3>
               <p>با کلیک روی «افزودن دسته‌بندی» اولین دسته را بساز.</p>
             </div>
@@ -163,7 +170,14 @@ if (empty($_SESSION['admin_authenticated'])) {
           <div class="panel-body">
             <div class="card-list items-grid" id="itemsList" aria-label="لیست آیتم‌ها"></div>
             <div class="empty-state" id="itemsEmpty" hidden>
-              <div class="empty-icon">☕</div>
+              <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                <path d="M20 28h24v14a8 8 0 0 1-8 8H28a8 8 0 0 1-8-8V28Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M44 32h4a4 4 0 0 1 0 8h-4" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M28 20a4 4 0 0 1 8 0v8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="22" cy="16" r="1.5" fill="currentColor"/>
+                <circle cx="32" cy="12" r="1.5" fill="currentColor"/>
+                <circle cx="42" cy="16" r="1.5" fill="currentColor"/>
+              </svg>
               <h3>هنوز آیتمی نداری</h3>
               <p>با کلیک روی «افزودن آیتم» اولین آیتم را اضافه کن.</p>
             </div>
