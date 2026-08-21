@@ -9,7 +9,6 @@ if (empty($_SESSION['admin_authenticated'])) {
     header('Location: /login.php');
     exit;
 }
-$adminToken = $config['admin_token'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
@@ -26,191 +25,217 @@ $adminToken = $config['admin_token'] ?? '';
 <body class="admin-page">
   <div class="admin-shell">
     <header class="admin-topbar">
-      <div>
-        <strong>مدیریت کافه پین</strong>
-        <span>دسته‌بندی‌ها، آیتم‌ها، قیمت‌ها، تصاویر و اطلاعات عمومی منو را مدیریت کن.</span>
+      <div class="topbar-brand">
+        <div class="topbar-logo" aria-hidden="true">☕</div>
+        <div>
+          <strong>مدیریت کافه پین</strong>
+          <span>منو، دسته‌بندی‌ها و تنظیمات عمومی را از اینجا مدیریت کن.</span>
+        </div>
       </div>
-      <div style="display:flex; gap:12px; align-items:center;">
-        <a class="top-link" href="/index.php">مشاهده صفحه منو</a>
-        <a class="top-link" href="/logout.php">خروج</a>
+      <div class="topbar-actions">
+        <a class="top-link" href="/index.php" target="_blank" rel="noopener">مشاهده صفحه منو ↗</a>
+        <a class="top-link danger" href="/logout.php">خروج</a>
       </div>
     </header>
 
-    <main class="admin-layout">
-      <section class="admin-main">
-        <div class="panel">
-          <div class="panel-head">
-            <strong>تنظیمات عمومی</strong>
-          </div>
-          <div class="panel-body">
-            <div class="field">
-              <label for="adminTokenInput">توکن API</label>
-              <input id="adminTokenInput" class="admin-input" type="password" value="<?= htmlspecialchars($adminToken, ENT_QUOTES, 'UTF-8') ?>" readonly>
-            </div>
-            <div class="field">
-              <label for="heroDescriptionInput">متن معرفی بالای صفحه</label>
-              <textarea id="heroDescriptionInput" class="admin-textarea"></textarea>
-            </div>
-            <div class="field-row">
-              <div class="field">
-                <label for="showcaseTitleInput">عنوان باکس نمایشی</label>
-                <input id="showcaseTitleInput" class="admin-input" type="text">
-              </div>
-              <div class="field">
-                <label for="showcaseDescriptionInput">توضیح باکس نمایشی</label>
-                <input id="showcaseDescriptionInput" class="admin-input" type="text">
-              </div>
-            </div>
-            <div class="field-row">
-              <div class="field">
-                <label for="footerBrandTitleInput">عنوان فوتر</label>
-                <input id="footerBrandTitleInput" class="admin-input" type="text">
-              </div>
-              <div class="field">
-                <label for="footerInfoInput">اطلاعات فوتر</label>
-                <textarea id="footerInfoInput" class="admin-textarea small-textarea"></textarea>
-              </div>
-            </div>
-            <div class="field">
-              <label for="logoInput">لوگوی کافه</label>
-              <input id="logoInput" class="hidden-input" type="file" accept="image/*">
-              <button class="upload-btn" type="button" id="logoUploadBtn">آپلود لوگو</button>
-            </div>
-            <div class="admin-preview" id="logoPreview"></div>
-            <div class="field">
-              <label for="showcaseImageInput">تصویر داخل کاپ نمایشی</label>
-              <input id="showcaseImageInput" class="hidden-input" type="file" accept="image/*">
-              <button class="upload-btn" type="button" id="showcaseImageUploadBtn">آپلود تصویر کاپ</button>
-            </div>
-            <div class="admin-preview" id="showcasePreview"></div>
-            <div class="admin-actions">
-              <button class="save-btn" type="button" id="saveGeneralBtn">ذخیره تنظیمات عمومی</button>
-              <button class="reset-btn" type="button" id="removeLogoBtn">حذف لوگو</button>
-              <button class="reset-btn" type="button" id="removeShowcaseImageBtn">حذف تصویر کاپ</button>
-            </div>
-          </div>
-        </div>
+    <nav class="admin-tabs" role="tablist" aria-label="بخش‌های مدیریت">
+      <button class="tab-btn active" role="tab" data-tab="settings" aria-selected="true">⚙️ تنظیمات عمومی</button>
+      <button class="tab-btn" role="tab" data-tab="sections" aria-selected="false">📂 دسته‌بندی‌ها</button>
+      <button class="tab-btn" role="tab" data-tab="items" aria-selected="false">☕ آیتم‌ها</button>
+      <button class="tab-btn" role="tab" data-tab="operations" aria-selected="false">🛠 عملیات</button>
+    </nav>
 
-        <div class="panel">
-          <div class="panel-head between">
-            <strong>دسته‌بندی‌ها</strong>
-            <button class="save-btn" type="button" id="addSectionBtn">افزودن دسته‌بندی</button>
+    <main class="admin-main">
+      <!-- TAB: GENERAL SETTINGS -->
+      <section class="tab-panel active" id="tab-settings" role="tabpanel">
+        <div class="settings-grid">
+          <div class="panel">
+            <div class="panel-head">
+              <strong>متن و عنوان‌ها</strong>
+              <span class="panel-hint">متن‌هایی که در صفحه منو نمایش داده می‌شوند</span>
+            </div>
+            <div class="panel-body">
+              <div class="field">
+                <label for="heroDescriptionInput">متن معرفی بالای صفحه</label>
+                <textarea id="heroDescriptionInput" class="admin-textarea" rows="3" placeholder="یک جمله کوتاه درباره فضای کافه..."></textarea>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label for="showcaseTitleInput">عنوان باکس نمایشی</label>
+                  <input id="showcaseTitleInput" class="admin-input" type="text" placeholder="مثلا: فضای گرم، منوی پویا">
+                </div>
+                <div class="field">
+                  <label for="showcaseDescriptionInput">توضیح باکس نمایشی</label>
+                  <input id="showcaseDescriptionInput" class="admin-input" type="text" placeholder="یک خط توضیح کوتاه">
+                </div>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label for="footerBrandTitleInput">عنوان فوتر</label>
+                  <input id="footerBrandTitleInput" class="admin-input" type="text" placeholder="نام برند">
+                </div>
+                <div class="field">
+                  <label for="footerInfoInput">اطلاعات فوتر (ساعات کاری، آدرس...)</label>
+                  <textarea id="footerInfoInput" class="admin-textarea small-textarea" rows="3"></textarea>
+                </div>
+              </div>
+              <div class="admin-actions">
+                <button class="save-btn" type="button" id="saveGeneralBtn">ذخیره تنظیمات</button>
+              </div>
+            </div>
           </div>
-          <div class="panel-body">
-            <div class="field">
-              <label for="sectionSelector">انتخاب دسته‌بندی</label>
-              <select id="sectionSelector" class="admin-select"></select>
-            </div>
-            <div class="field-row">
-              <div class="field">
-                <label for="sectionFaInput">نام فارسی</label>
-                <input id="sectionFaInput" class="admin-input" type="text">
-              </div>
-              <div class="field">
-                <label for="sectionEnInput">نام انگلیسی</label>
-                <input id="sectionEnInput" class="admin-input" type="text">
-              </div>
-            </div>
-            <div class="field-row">
-              <div class="field">
-                <label for="sectionIconInput">آیکون یا ایموجی</label>
-                <input id="sectionIconInput" class="admin-input" type="text">
-              </div>
-              <div class="field">
-                <label for="sectionIdInput">شناسه انگلیسی</label>
-                <input id="sectionIdInput" class="admin-input" type="text">
-              </div>
-            </div>
-            <div class="admin-actions">
-              <button class="save-btn" type="button" id="saveSectionBtn">ذخیره دسته‌بندی</button>
-              <button class="reset-btn" type="button" id="deleteSectionBtn">حذف دسته‌بندی</button>
-            </div>
-          </div>
-        </div>
 
-        <div class="panel">
-          <div class="panel-head between">
-            <strong>آیتم‌ها</strong>
-            <button class="save-btn" type="button" id="addItemBtn">افزودن آیتم</button>
-          </div>
-          <div class="panel-body">
-            <div class="field">
-              <label for="itemSelector">انتخاب آیتم</label>
-              <select id="itemSelector" class="admin-select"></select>
+          <div class="panel">
+            <div class="panel-head">
+              <strong>تصاویر</strong>
+              <span class="panel-hint">لوگو و تصویر کاپ نمایشی</span>
             </div>
-            <div class="field-row">
-              <div class="field">
-                <label for="itemSectionSelector">دسته‌بندی آیتم</label>
-                <select id="itemSectionSelector" class="admin-select"></select>
+            <div class="panel-body">
+              <div class="image-edit">
+                <div class="image-edit-preview" id="logoPreview"></div>
+                <div class="image-edit-controls">
+                  <strong>لوگوی کافه</strong>
+                  <span class="muted">PNG/SVG پیشنهاد می‌شود. حداکثر 5MB.</span>
+                  <div class="admin-actions">
+                    <button class="upload-btn" type="button" id="logoUploadBtn">📤 آپلود لوگو</button>
+                    <button class="reset-btn" type="button" id="removeLogoBtn">🗑 حذف</button>
+                  </div>
+                </div>
+                <input id="logoInput" class="hidden-input" type="file" accept="image/*">
               </div>
-              <div class="field">
-                <label for="itemIdInput">شناسه آیتم</label>
-                <input id="itemIdInput" class="admin-input" type="text">
+
+              <div class="image-edit">
+                <div class="image-edit-preview" id="showcasePreview"></div>
+                <div class="image-edit-controls">
+                  <strong>تصویر داخل کاپ نمایشی</strong>
+                  <span class="muted">تصویر اصلی که در فوتر نمایش داده می‌شود.</span>
+                  <div class="admin-actions">
+                    <button class="upload-btn" type="button" id="showcaseImageUploadBtn">📤 آپلود تصویر</button>
+                    <button class="reset-btn" type="button" id="removeShowcaseImageBtn">🗑 حذف</button>
+                  </div>
+                </div>
+                <input id="showcaseImageInput" class="hidden-input" type="file" accept="image/*">
               </div>
-            </div>
-            <div class="field-row">
-              <div class="field">
-                <label for="nameFaInput">نام فارسی</label>
-                <input id="nameFaInput" class="admin-input" type="text">
-              </div>
-              <div class="field">
-                <label for="nameEnInput">نام انگلیسی</label>
-                <input id="nameEnInput" class="admin-input" type="text">
-              </div>
-            </div>
-            <div class="field-row">
-              <div class="field">
-                <label for="priceInput">قیمت</label>
-                <input id="priceInput" class="admin-input" type="text">
-              </div>
-              <div class="field">
-                <label for="emojiInput">ایموجی جایگزین</label>
-                <input id="emojiInput" class="admin-input" type="text">
-              </div>
-            </div>
-            <div class="field">
-              <label for="descInput">توضیحات</label>
-              <textarea id="descInput" class="admin-textarea"></textarea>
-            </div>
-            <div class="field">
-              <label for="tagsInput">تگ‌ها</label>
-              <input id="tagsInput" class="admin-input" type="text" placeholder="hot,cold,sweet,new,vegan">
-            </div>
-            <label class="checkbox-line">
-              <input id="featuredInput" type="checkbox">
-              آیتم ویژه باشد
-            </label>
-            <div class="field">
-              <label for="itemImageInput">تصویر آیتم</label>
-              <input id="itemImageInput" class="hidden-input" type="file" accept="image/*">
-              <button class="upload-btn" type="button" id="itemImageUploadBtn">آپلود تصویر</button>
-            </div>
-            <div class="admin-preview" id="imagePreview"></div>
-            <div class="admin-actions">
-              <button class="save-btn" type="button" id="saveItemBtn">ذخیره آیتم</button>
-              <button class="reset-btn" type="button" id="removeItemImageBtn">حذف تصویر</button>
-              <button class="reset-btn" type="button" id="deleteItemBtn">حذف آیتم</button>
             </div>
           </div>
         </div>
       </section>
 
-      <aside class="admin-side panel">
-        <div class="panel-head">
-          <strong>عملیات سریع</strong>
-        </div>
-        <div class="panel-body">
-          <div class="admin-actions stack">
-            <button class="save-btn" type="button" id="resetAllBtn">بازنشانی کل داده‌ها</button>
-            <button class="save-btn" type="button" id="seedDatabaseBtn">Seed دیتابیس</button>
-            <button class="save-btn" type="button" id="bumpCacheBtn">پاک‌سازی کش مرورگر</button>
-            <a class="top-link full" href="/index.php">رفتن به صفحه مشتری</a>
+      <!-- TAB: SECTIONS -->
+      <section class="tab-panel" id="tab-sections" role="tabpanel">
+        <div class="panel">
+          <div class="panel-head between">
+            <div>
+              <strong>دسته‌بندی‌ها</strong>
+              <span class="panel-hint">برای مرتب‌سازی، کارت‌ها را بکشید و جابجا کنید</span>
+            </div>
+            <button class="save-btn" type="button" id="addSectionBtn">➕ افزودن دسته‌بندی</button>
           </div>
-          <div class="status-note" id="statusNote" role="status" aria-live="polite"></div>
+          <div class="panel-body">
+            <div class="card-list" id="sectionsList" aria-label="لیست دسته‌بندی‌ها"></div>
+            <div class="empty-state" id="sectionsEmpty" hidden>
+              <div class="empty-icon">📂</div>
+              <h3>هنوز دسته‌بندی نداری</h3>
+              <p>با کلیک روی «افزودن دسته‌بندی» اولین دسته را بساز.</p>
+            </div>
+          </div>
         </div>
-      </aside>
+      </section>
+
+      <!-- TAB: ITEMS -->
+      <section class="tab-panel" id="tab-items" role="tabpanel">
+        <div class="panel">
+          <div class="panel-head">
+            <div class="items-head">
+              <div>
+                <strong>آیتم‌های منو</strong>
+                <span class="panel-hint">کارت‌ها برای ویرایش. روی «ویرایش» کلیک کن.</span>
+              </div>
+              <div class="items-controls">
+                <select id="itemsFilter" class="admin-select compact">
+                  <option value="">همه دسته‌ها</option>
+                </select>
+                <input id="itemsSearch" class="admin-input compact" type="search" placeholder="🔍 جستجو...">
+                <button class="save-btn" type="button" id="addItemBtn">➕ افزودن آیتم</button>
+              </div>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="card-list items-grid" id="itemsList" aria-label="لیست آیتم‌ها"></div>
+            <div class="empty-state" id="itemsEmpty" hidden>
+              <div class="empty-icon">☕</div>
+              <h3>هنوز آیتمی نداری</h3>
+              <p>با کلیک روی «افزودن آیتم» اولین آیتم را اضافه کن.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: OPERATIONS -->
+      <section class="tab-panel" id="tab-operations" role="tabpanel">
+        <div class="operations-grid">
+          <div class="panel op-card">
+            <div class="op-icon" aria-hidden="true">🔄</div>
+            <strong>بازنشانی کل داده‌ها</strong>
+            <p>تمام منو با داده‌های پیش‌فرض جایگزین می‌شود. تغییرات اخیر از دست می‌روند.</p>
+            <button class="save-btn danger" type="button" id="resetAllBtn">بازنشانی</button>
+          </div>
+          <div class="panel op-card">
+            <div class="op-icon" aria-hidden="true">🌱</div>
+            <strong>Seed دیتابیس</strong>
+            <p>اگر دیتابیس خالی است، جداول ساخته و با داده نمونه پر می‌شوند.</p>
+            <button class="save-btn" type="button" id="seedDatabaseBtn">اجرای Seed</button>
+          </div>
+          <div class="panel op-card">
+            <div class="op-icon" aria-hidden="true">⚡</div>
+            <strong>پاک‌سازی کش مرورگر</strong>
+            <p>نسخه فایل‌های CSS/JS را افزایش بده تا کاربران کش قدیمی را نگه ندارند.</p>
+            <button class="save-btn" type="button" id="bumpCacheBtn">پاک‌سازی کش</button>
+          </div>
+        </div>
+      </section>
     </main>
   </div>
+
+  <!-- Edit Drawer (modal for editing an item) -->
+  <div class="drawer" id="editDrawer" aria-hidden="true" role="dialog" aria-labelledby="drawerTitle">
+    <div class="drawer-backdrop" data-drawer-close></div>
+    <div class="drawer-panel">
+      <header class="drawer-head">
+        <div>
+          <strong id="drawerTitle">ویرایش آیتم</strong>
+          <span class="panel-hint" id="drawerSubtitle"></span>
+        </div>
+        <button class="drawer-close" type="button" data-drawer-close aria-label="بستن">×</button>
+      </header>
+      <div class="drawer-body" id="drawerBody">
+        <!-- form is injected dynamically -->
+      </div>
+      <footer class="drawer-foot">
+        <button class="reset-btn danger" type="button" id="drawerDeleteBtn">🗑 حذف</button>
+        <div class="drawer-foot-right">
+          <button class="reset-btn" type="button" data-drawer-close>انصراف</button>
+          <button class="save-btn" type="button" id="drawerSaveBtn">💾 ذخیره</button>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Confirm dialog -->
+  <div class="confirm-dialog" id="confirmDialog" aria-hidden="true" role="alertdialog">
+    <div class="confirm-backdrop" data-confirm-close></div>
+    <div class="confirm-panel">
+      <strong id="confirmTitle">تأیید عملیات</strong>
+      <p id="confirmMessage">آیا مطمئن هستی؟</p>
+      <div class="confirm-actions">
+        <button class="reset-btn" type="button" data-confirm-close>انصراف</button>
+        <button class="save-btn danger" type="button" id="confirmOk">تأیید</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
   <script src="assets/js/menu-store.js"></script>
   <script src="assets/js/admin-app.js"></script>
